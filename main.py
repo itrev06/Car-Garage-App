@@ -13,16 +13,16 @@ hide_debug_information()
 set_website_framed(False)
 set_website_style("retro")
 @dataclass
+class Car:
+    body: list[str]
+    color: str
+    name: str
+@dataclass
 class State:
     garage: list[Car]
     latest_car: Car
     drawn_car: Picture
     car_color: str
-@dataclass
-class Car:
-    body: list[str]
-    color: str
-    name: str
 MATERIALS = {
     "B": "body",
     "T": "tire",
