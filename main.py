@@ -1,17 +1,17 @@
 from drafter import *
 from drafter import Picture
 from dataclasses import dataclass
-set_website_title("Corgi Cafe")
+set_website_title("Shitty Pixel Car Garage")
 set_site_information(
-    author="Your Name",
-    description="Order snacks for very good dogs.",
+    author="Isabella Trevino",
+    description="Make really bad pixel art of car.",
     sources="Thanks to the Drafter docs and my study group.",
-    planning="plan.pdf",
-    links=["https://github.com/your-username/your-repository"]
+    planning="",
+    links=[]
 )
 hide_debug_information()
 set_website_framed(False)
-set_website_style("none")
+set_website_style("retro")
 @dataclass
 class State:
     garage: list[Car]
@@ -155,7 +155,8 @@ def choose_color(state: State, car_color:str):
             Div("You have created: "+state.latest_car.name+"\n",
             "Give it a name",
             TextBox("car_name"),
-            Button("Change name","name_car"))
+            Button("Change name","name_car")),
+            Button("IT NEEDS BIGGER WHEELS","get_big_wheels")
             ])
     else:
         return Page(
@@ -173,7 +174,7 @@ def color_car(car:Car,car_color:str):
         car_canvas = Picture.new(800,120)
         scale = 10
     elif car.body == CARS["truck"]:
-        car_canvas = Picture.new(600,150)
+        car_canvas = Picture.new(480,150)
         scale = 8
     elif car.body == CARS["van"]:
         car_canvas = Picture.new(800,200)
@@ -233,6 +234,35 @@ def add_spoiler(state:State):
             TextBox("car_name"),
             Button("Change name","name_car"))
             ])
-
+@route
+def get_big_wheels(state:State):
+    state.latest_car.body.append("BBBBBBTTTTTTTTBBBBBBBBBBBBBBBBBBBBBBBBBTTTTTTTTBBBBBBB")
+    state.latest_car.body.append("BBBBBBTTTTTTTTBBBBBBBBBBBBBBBBBBBBBBBBBTTTTTTTTBBBBBBB")
+    for y, row in enumerate(state.latest_car.body):
+        if y==8:
+            state.latest_car.body[y] = "BBBBBBBTTTTTTBBBBBBBBBBBBBBBBBBBBBBBBBBBTTTTTTBBBBBBBB"
+        elif y==9:
+            state.latest_car.body[y] = "BBBBBBTTTTTTTTBBBBBBBBBBBBBBBBBBBBBBBBBTTTTTTTTBBBBBBB"
+    swap_ind = -2
+    for y, row in enumerate(state.latest_car.body):
+        if y>10 and y<13:
+            state.latest_car.body[swap_ind],state.latest_car.body[y] = state.latest_car.body[y],state.latest_car.body[swap_ind]
+            swap_ind = swap_ind+1
+            print(y,row)
+        elif y>=13 and y<15:
+            state.latest_car.body[y],state.latest_car.body[y+1]=state.latest_car.body[y+1],state.latest_car.body[y]
+            print(y,row)
+    state.drawn_car = color_car(state.latest_car,state.latest_car.color)
+    return Page(
+            state, [
+            "yeeeAAAHHhhhHH\n",
+            state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("You have created: "+state.latest_car.name+"\n",
+            "Give it a name",
+            TextBox("car_name"),
+            Button("Change name","name_car"))
+            ])
+     
 start_server(State([],None,None,""))
 
