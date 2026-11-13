@@ -4,8 +4,8 @@ from dataclasses import dataclass
 set_website_title("Shitty Pixel Car Garage")
 set_site_information(
     author="Isabella Trevino",
-    description="Make really bad pixel art of car.",
-    sources="Thanks to the Drafter docs and my study group.",
+    description="Make really bad pixel art of cars.",
+    sources="Thanks to Professor Bart for providing us with Drafter.",
     planning="",
     links=[]
 )
