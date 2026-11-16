@@ -4,25 +4,32 @@ from dataclasses import dataclass
 set_website_title("Shitty Pixel Car Garage")
 set_site_information(
     author="Isabella Trevino",
-    description="Make really bad pixel art of cars.",
-    sources="Thanks to Professor Bart for providing us with Drafter.",
+    description="Make really bad pixel art of car.",
+    sources="Thanks to the Drafter docs and my study group.",
     planning="",
     links=[]
 )
 hide_debug_information()
 set_website_framed(False)
 set_website_style("retro")
-@dataclass
-class Car:
-    body: list[str]
-    color: str
-    name: str
+"""
+Welcome to the worst car garage in the world. Ya got 6 paint colors to choose from, three models,
+and they all look like crap. As an act of good faith, there are limited modifications that
+make your shitboxes look moderately better, but
+honestly its all hot garbage.
+"""
 @dataclass
 class State:
     garage: list[Car]
     latest_car: Car
     drawn_car: Picture
     car_color: str
+@dataclass
+class Car:
+    body: list[str]
+    color: str
+    name: str
+    model: str
 MATERIALS = {
     "B": "body",
     "T": "tire",
@@ -81,7 +88,24 @@ CARS = {
 "    TTTTTTT                     TTTTTTT",
 "    TTTTTTT                     TTTTTTT",
 "     TTTTT                       TTTTT"
-    ]
+    ],
+"decal_van": [
+"  BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+" BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWWWWBB",
+"BBBBBBBBBBUUBBBBBHBBBBBBBBWWWWWWWWWBB",
+"BBBBBBBBBBMUUBBBHBBBBBBBBBWWWWWWWWWWBB",
+"BBBBBBBBBMMUUUUUBBBBBBBBBBWWWWWWWWWWWBBB",
+"BBBBBBBBMMMUUTUUUUUUBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBMMMMMUUUUUUUUUBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBMMMMMUUUUUBBBBBBBBBBBBBBBBBBBBBBBBBBHHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBTTTTTBBBBBBBBBBBBBBBBBBBBBBBTTTTTBBBBBBB",
+"    TTTTTTT                     TTTTTTT",
+"    TTTTTTT                     TTTTTTT",
+"     TTTTT                       TTTTT"
+]
 }
 
 pix_ht = 10
@@ -94,8 +118,11 @@ def index(state: State)->Page:
         "Choose a shit-box\n",
         Button("Vroom Car", "make_sports"),
         Button("Truk","make_truck"),
-        Button("Mom van","make_van")
+        Button("Mom van","make_van"),
+        Header("Your Garage:",3)
         ]
+    if not state.garage:
+        content.append(Div("wow such empty"))
     for i, car in enumerate(state.garage):
         content.append(Div(
             color_car(car, car.color)))
@@ -104,7 +131,7 @@ def index(state: State)->Page:
         state, content)
 @route                
 def make_sports(state: State):
-    state.latest_car = Car(CARS["sports"],"","nameless shit-box")
+    state.latest_car = Car(CARS["sports"].copy(),"","nameless shit-box","sports")
     return Page(
         state, [
         "Choose a body paint color",
@@ -113,7 +140,7 @@ def make_sports(state: State):
         ])
 @route                
 def make_truck(state: State):
-    state.latest_car = Car(CARS["truck"],"","nameless shit-box")
+    state.latest_car = Car(CARS["truck"].copy(),"","nameless shit-box","truck")
     return Page(
         state, [
         "Choose a body paint color",
@@ -122,7 +149,7 @@ def make_truck(state: State):
         ])
 @route                
 def make_van(state: State):
-    state.latest_car = Car(CARS["van"],"","nameless shit-box")
+    state.latest_car = Car(CARS["van"].copy(),"","nameless shit-box","van")
     return Page(
         state, [
         "Choose a body paint color",
@@ -167,33 +194,60 @@ def choose_color(state: State, car_color:str):
             Div("You have created: "+state.latest_car.name+"\n",
             "Give it a name",
             TextBox("car_name"),
-            Button("Change name","name_car"))
+            Button("Change name","name_car")),
+            Button("Make it radical","van_decal")
             ])
 def color_car(car:Car,car_color:str):
-    if car.body == CARS["sports"]:
+    if car.model == "sports":
         car_canvas = Picture.new(800,120)
         scale = 10
-    elif car.body == CARS["truck"]:
+        car_width = max(len(row) for row in car.body)
+        xoffset = (800 - car_width*scale) // 2
+        yoffset = (120 - len(car.body)*scale) // 2
+    elif car.model == "truck":
         car_canvas = Picture.new(480,150)
         scale = 8
-    elif car.body == CARS["van"]:
+        car_width = max(len(row) for row in car.body)
+        xoffset = (480 - car_width*scale) // 2
+        yoffset = (150 - len(car.body)*scale) // 2
+    elif car.model == "van":
         car_canvas = Picture.new(800,200)
         scale = 10
+        car_width = max(len(row) for row in car.body)
+        xoffset = (800 - car_width*scale) // 2
+        yoffset = (200 - len(car.body)*scale) // 2
     for y, row in enumerate(car.body):
         for x, pixel in enumerate(row):
            for dy in range(scale):
                for dx in range(scale):
                    if pixel == "B":
-                       car_canvas.set_pixel(x*scale+dx,y*scale+dy,car_color)
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,car_color)
                    elif pixel == "W":
-                       car_canvas.set_pixel(x*scale+dx,y*scale+dy,"gray")
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"gray")
                    elif pixel == "T":
-                       car_canvas.set_pixel(x*scale+dx,y*scale+dy,"black")
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"black")
                    elif pixel == "H":
-                       car_canvas.set_pixel(x*scale+dx,y*scale+dy,"goldenrod")
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"goldenrod")
+                   elif pixel == "U":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"white")
+                   elif pixel == "M":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"deeppink")
                    else:
                        pass
     return car_canvas
+@route
+def van_decal(state:State):
+    state.latest_car.body = CARS["decal_van"]
+    state.drawn_car = color_car(state.latest_car, state.latest_car.color)
+    return Page(state,[
+        "radical\n",
+        state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("You have created: "+state.latest_car.name+"\n",
+            "Give it a name",
+            TextBox("car_name"),
+            Button("Change name","name_car"))
+        ])
 @route
 def add_to_garage(state: State):
     state.garage.append(state.latest_car)
