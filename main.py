@@ -19,17 +19,17 @@ make your shitboxes look moderately better, but
 honestly its all hot garbage.
 """
 @dataclass
-class State:
-    garage: list[Car]
-    latest_car: Car
-    drawn_car: Picture
-    car_color: str
-@dataclass
 class Car:
     body: list[str]
     color: str
     name: str
     model: str
+@dataclass
+class State:
+    garage: list[Car]
+    latest_car: Car
+    drawn_car: Picture
+    car_color: str
 MATERIALS = {
     "B": "body",
     "T": "tire",
