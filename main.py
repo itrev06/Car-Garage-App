@@ -11,9 +11,9 @@ set_site_information(
 )
 hide_debug_information()
 set_website_framed(False)
-set_website_style("retro")
+set_website_style("98")
 """
-Welcome to the worst car garage in the world. Ya got 6 paint colors to choose from, three models,
+Welcome to the worst car garage in the world. Ya got 6 paint colors to choose from, four models,
 and they all look like crap. As an act of good faith, there are limited modifications that
 make your shitboxes look moderately better, but
 honestly its all hot garbage.
@@ -30,19 +30,10 @@ class State:
     latest_car: Car
     drawn_car: Picture
     car_color: str
-MATERIALS = {
-    "B": "body",
-    "T": "tire",
-    "W": "window"
-    }
-COLORS = {
-    "Blue": "b",
-    "Red": "r",
-    "Green": "g",
-    "Orange": "o",
-    "Pink": "p",
-    "Black": "x"
-    }
+    bmess_index: int
+    smess_index: int
+    vmess_index: int
+    tmess_index: int
 
 CARS = {
 "sports": [
@@ -105,11 +96,53 @@ CARS = {
 "    TTTTTTT                     TTTTTTT",
 "    TTTTTTT                     TTTTTTT",
 "     TTTTT                       TTTTT"
+],
+"bus": [
+"   BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"   BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"  BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+" BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBBBBWWWWWWWWWWWWBBBBBBBB",
+"BBBBBBBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBBBBWWWWWWWWWWWWWBBB",
+"BBBBBBBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBBBBWWWWWWWWWWWWWWBBB",
+"BBBBBBBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBBBBWWWWWWWWWWWWWWWBBB",
+"BBBBBBBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBBBBWWWWWWWWWWWWWWWWBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBHHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBHHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBHHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBTTTTTBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBTTTTTBBBBBBB",
+"    TTTTTTT                                                                       TTTTTTT",
+"    TTTTTTT                                                                       TTTTTTT",
+"     TTTTT                                                                         TTTTT"
+],
+"fullbus": [
+"   BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"   BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"  BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+" BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBWWWWWWWWWBBBBBWWWWWWWWWWWWBBBBBBBB",
+"BBBBBBBBWWWYYYWWWBBWWWTTTWWWBBWWWDDDWWWBBWWWDDDWWWBBWWWTTTWWWBBBBBWWWWWWWWWWWWWBBB",
+"BBBBBBBBWWWPPPWWWBBWWWDDDWWWBBWWWPPPWWWBBWWWVVVWWWBBWWWEEEWWWBBBBBWWWWWWWWWWWWWWBBB",
+"BBBBBBBBWWWPPPWWWBBWWWDDDWWWBBWWWPPPWWWBBWWWVVVWWWBBWWWEEEWWWBBBBBWWWWWWWWWWWWWWWBBB",
+"BBBBBBBBWWSSSSSWWBBWWFFFFFWWBBWWLLLLLWWBBWWSSSSSWWBBWWFFFFFWWBBBBBWWWWWWWWWWWWWWWWBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBHHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBHHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBHHHHH",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+"BBBBBTTTTTBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBTTTTTBBBBBBB",
+"    TTTTTTT                                                                       TTTTTTT",
+"    TTTTTTT                                                                       TTTTTTT",
+"     TTTTT                                                                         TTTTT"
 ]
 }
 
-pix_ht = 10
-pix_wd = 10
 
 @route
 def index(state: State)->Page:
@@ -119,13 +152,14 @@ def index(state: State)->Page:
         Button("Vroom Car", "make_sports"),
         Button("Truk","make_truck"),
         Button("Mom van","make_van"),
-        Header("Your Garage:",3)
+        Button("SkooBus","make_bus"),
+        Header("Your Garage:")
         ]
     if not state.garage:
         content.append(Div("wow such empty"))
     for i, car in enumerate(state.garage):
-        content.append(Div(
-            color_car(car, car.color)))
+        content.append(change_margin(Div(
+            color_car(car, car.color)),"20px"))
         content.append(car.name)
     return Page(
         state, content)
@@ -135,7 +169,7 @@ def make_sports(state: State):
     return Page(
         state, [
         "Choose a body paint color",
-        RadioButtonGroup("car_color", ["Green","Blue","Red","Pink","Black","Orange"]),
+        RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
         Button("Apply","choose_color")
         ])
 @route                
@@ -144,7 +178,7 @@ def make_truck(state: State):
     return Page(
         state, [
         "Choose a body paint color",
-        RadioButtonGroup("car_color", ["Green","Blue","Red","Pink","Black","Orange"]),
+        RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
         Button("Apply","choose_color")
         ])
 @route                
@@ -153,18 +187,37 @@ def make_van(state: State):
     return Page(
         state, [
         "Choose a body paint color",
-        RadioButtonGroup("car_color", ["Green","Blue","Red","Pink","Black","Orange"]),
+        RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
         Button("Apply","choose_color")
         ])
+@route
+def make_bus(state: State):
+    state.latest_car = Car(CARS["bus"].copy(),"","detention center transport","bus")
+    return Page(
+        state, [
+        "Choose a body paint color",
+        RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
+        Button("Apply","choose_color")
+        ])
+bus_messages = ["but can your stang haul THIS MUCH ass?\n","Martha why did we have so many kids\n","please let this be a normal field trip\n","that'll be two dollars\n","where does it go? nobody knows\n"]
+sports_messages = ["NeEEeEEoOWWWWW\n","kachow\n","she's hp maxxing","i am speed (Pixar please don't sue me)\n","the only way to improve this is some dumb-ass underglow\n"]
+truck_messages = ["now that's a TRUK\n","country roooooaaads\n","ford eff wun fitty\n","murica\n"]
+van_messages = ["wow so hip\n","ready for soccer practice\n","bringing the orange slices and kaprisuns\n","hey kid you want some candy?\n","put the pedal to the metal, ma!\n"]
 @route
 def choose_color(state: State, car_color:str):
     state.car_color = car_color
     state.latest_car.color = car_color
     state.drawn_car = color_car(state.latest_car,car_color)
     if state.latest_car.body == CARS["sports"]:
+        if state.smess_index <= 4:
+            display_mess = sports_messages[state.smess_index]
+            state.smess_index += 1
+        else:
+            state.smess_index = 0
+            display_mess = sports_messages[state.smess_index]
         return Page(
             state, [
-            "NeEEeEEoOWWWWW\n",
+            display_mess,
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -174,9 +227,15 @@ def choose_color(state: State, car_color:str):
             Div(Button("Add a spoiler","add_spoiler"))
             ])
     elif state.latest_car.body == CARS["truck"]:
+        if state.tmess_index < 4:
+            display_mess = truck_messages[state.tmess_index]
+            state.tmess_index += 1
+        else:
+            state.tmess_index = 0
+            display_mess = truck_messages[state.tmess_index]
         return Page(
             state, [
-            "now that's a TRUK\n",
+            display_mess,
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -185,10 +244,34 @@ def choose_color(state: State, car_color:str):
             Button("Change name","name_car")),
             Button("IT NEEDS BIGGER WHEELS","get_big_wheels")
             ])
-    else:
+    elif state.latest_car.body == CARS["bus"]:
+        if state.bmess_index <= 4:
+            display_mess = bus_messages[state.bmess_index]
+            state.bmess_index += 1
+        else:
+            state.bmess_index = 0
+            display_mess = bus_messages[state.bmess_index]
         return Page(
             state, [
-            "wow so hip\n",
+            display_mess,
+            state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("You have created: "+state.latest_car.name+"\n",
+            "Give it a name",
+            TextBox("car_name"),
+            Button("Change name","name_car")),
+            Button("Pick up some kiddos","add_kids")
+            ])
+    else:
+        if state.vmess_index <= 4:
+            display_mess = van_messages[state.vmess_index]
+            state.vmess_index += 1
+        else:
+            state.vmess_index = 0
+            display_mess = van_messages[state.vmess_index]
+        return Page(
+            state, [
+            display_mess,
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -199,10 +282,10 @@ def choose_color(state: State, car_color:str):
             ])
 def color_car(car:Car,car_color:str):
     if car.model == "sports":
-        car_canvas = Picture.new(800,120)
+        car_canvas = Picture.new(600,120)
         scale = 10
         car_width = max(len(row) for row in car.body)
-        xoffset = (800 - car_width*scale) // 2
+        xoffset = (600 - car_width*scale) // 2
         yoffset = (120 - len(car.body)*scale) // 2
     elif car.model == "truck":
         car_canvas = Picture.new(480,150)
@@ -211,10 +294,16 @@ def color_car(car:Car,car_color:str):
         xoffset = (480 - car_width*scale) // 2
         yoffset = (150 - len(car.body)*scale) // 2
     elif car.model == "van":
-        car_canvas = Picture.new(800,200)
+        car_canvas = Picture.new(700,200)
         scale = 10
         car_width = max(len(row) for row in car.body)
-        xoffset = (800 - car_width*scale) // 2
+        xoffset = (700 - car_width*scale) // 2
+        yoffset = (200 - len(car.body)*scale) // 2
+    elif car.model == "bus":
+        car_canvas = Picture.new(700,200)
+        scale = 7
+        car_width = max(len(row) for row in car.body)
+        xoffset = (700 - car_width*scale) // 2
         yoffset = (200 - len(car.body)*scale) // 2
     for y, row in enumerate(car.body):
         for x, pixel in enumerate(row):
@@ -223,7 +312,7 @@ def color_car(car:Car,car_color:str):
                    if pixel == "B":
                        car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,car_color)
                    elif pixel == "W":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"gray")
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"lightcyan")
                    elif pixel == "T":
                        car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"black")
                    elif pixel == "H":
@@ -232,15 +321,44 @@ def color_car(car:Car,car_color:str):
                        car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"white")
                    elif pixel == "M":
                        car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"deeppink")
+                   elif pixel == "Y":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"darkkhaki")
+                   elif pixel == "D":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"sienna")
+                   elif pixel == "S":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"royalblue")
+                   elif pixel == "P":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"bisque")
+                   elif pixel == "F":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"orangered")
+                   elif pixel == "L":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"mediumpurple")
+                   elif pixel == "V":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"peru")
+                   elif pixel == "E":
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"papayawhip")
                    else:
                        pass
     return car_canvas
 @route
 def van_decal(state:State):
-    state.latest_car.body = CARS["decal_van"]
+    state.latest_car.body = CARS["decal_van"].copy()
     state.drawn_car = color_car(state.latest_car, state.latest_car.color)
     return Page(state,[
         "radical\n",
+        state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("You have created: "+state.latest_car.name+"\n",
+            "Give it a name",
+            TextBox("car_name"),
+            Button("Change name","name_car"))
+        ])
+@route
+def add_kids(state:State):
+    state.latest_car.body = CARS["fullbus"].copy()
+    state.drawn_car = color_car(state.latest_car, state.latest_car.color)
+    return Page(state,[
+        "captives acquired",
         state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -318,5 +436,5 @@ def get_big_wheels(state:State):
             Button("Change name","name_car"))
             ])
      
-start_server(State([],None,None,""))
+start_server(State([],None,None,"",0,0,0,0))
 
