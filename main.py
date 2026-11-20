@@ -11,6 +11,7 @@ set_site_information(
 )
 hide_debug_information()
 set_website_framed(False)
+set_website_style("none")
 set_website_style("98")
 """
 Welcome to the worst car garage in the world. Ya got 6 paint colors to choose from, four models,
