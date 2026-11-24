@@ -11,7 +11,6 @@ set_site_information(
 )
 hide_debug_information()
 set_website_framed(False)
-set_website_style("none")
 set_website_style("98")
 """
 Welcome to the worst car garage in the world. Ya got 6 paint colors to choose from, four models,
@@ -159,9 +158,9 @@ def index(state: State)->Page:
     if not state.garage:
         content.append(Div("wow such empty"))
     for i, car in enumerate(state.garage):
-        content.append(change_margin(Div(
-            color_car(car, car.color)),"20px"))
-        content.append(car.name)
+        content.append(change_border(Image(
+            color_car(car, car.color)),"3px solid black"))
+        content.append(Div(change_text_size(car.name,"20px")))
     return Page(
         state, content)
 @route                
@@ -169,7 +168,7 @@ def make_sports(state: State):
     state.latest_car = Car(CARS["sports"].copy(),"","nameless shit-box","sports")
     return Page(
         state, [
-        "Choose a body paint color",
+        change_margin(Div("Choose a body paint color"),"12px"),
         RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
         Button("Apply","choose_color")
         ])
@@ -178,7 +177,7 @@ def make_truck(state: State):
     state.latest_car = Car(CARS["truck"].copy(),"","nameless shit-box","truck")
     return Page(
         state, [
-        "Choose a body paint color",
+        change_margin(Div("Choose a body paint color"),"12px"),
         RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
         Button("Apply","choose_color")
         ])
@@ -187,7 +186,7 @@ def make_van(state: State):
     state.latest_car = Car(CARS["van"].copy(),"","nameless shit-box","van")
     return Page(
         state, [
-        "Choose a body paint color",
+        change_margin(Div("Choose a body paint color"),"12px"),
         RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
         Button("Apply","choose_color")
         ])
@@ -196,7 +195,7 @@ def make_bus(state: State):
     state.latest_car = Car(CARS["bus"].copy(),"","detention center transport","bus")
     return Page(
         state, [
-        "Choose a body paint color",
+        change_margin(Div("Choose a body paint color"),"12px"),
         RadioButtonGroup("car_color", ["Yellow","Green","Blue","Red","Pink","Black","Orange"]),
         Button("Apply","choose_color")
         ])
@@ -218,7 +217,7 @@ def choose_color(state: State, car_color:str):
             display_mess = sports_messages[state.smess_index]
         return Page(
             state, [
-            display_mess,
+            change_margin(Div(display_mess),"12px"),
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -236,7 +235,7 @@ def choose_color(state: State, car_color:str):
             display_mess = truck_messages[state.tmess_index]
         return Page(
             state, [
-            display_mess,
+            change_margin(Div(display_mess),"12px"),
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -254,7 +253,7 @@ def choose_color(state: State, car_color:str):
             display_mess = bus_messages[state.bmess_index]
         return Page(
             state, [
-            display_mess,
+            change_margin(Div(display_mess),"12px"),
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -272,7 +271,7 @@ def choose_color(state: State, car_color:str):
             display_mess = van_messages[state.vmess_index]
         return Page(
             state, [
-            display_mess,
+            change_margin(Div(display_mess),"12px"),
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -282,6 +281,22 @@ def choose_color(state: State, car_color:str):
             Button("Make it radical","van_decal")
             ])
 def color_car(car:Car,car_color:str):
+    pixel_colors = {
+    "B": car_color,
+    "W": "lightcyan",
+    "T": "black",
+    "H": "goldenrod",
+    "U": "white",
+    "M": "deeppink",
+    "Y": "darkkhaki",
+    "D": "sienna",
+    "S": "royalblue",
+    "P": "bisque",
+    "F": "orangered",
+    "L": "mediumpurple",
+    "V": "peru",
+    "E": "papayawhip"
+    }
     if car.model == "sports":
         car_canvas = Picture.new(600,120)
         scale = 10
@@ -310,43 +325,16 @@ def color_car(car:Car,car_color:str):
         for x, pixel in enumerate(row):
            for dy in range(scale):
                for dx in range(scale):
-                   if pixel == "B":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,car_color)
-                   elif pixel == "W":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"lightcyan")
-                   elif pixel == "T":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"black")
-                   elif pixel == "H":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"goldenrod")
-                   elif pixel == "U":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"white")
-                   elif pixel == "M":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"deeppink")
-                   elif pixel == "Y":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"darkkhaki")
-                   elif pixel == "D":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"sienna")
-                   elif pixel == "S":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"royalblue")
-                   elif pixel == "P":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"bisque")
-                   elif pixel == "F":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"orangered")
-                   elif pixel == "L":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"mediumpurple")
-                   elif pixel == "V":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"peru")
-                   elif pixel == "E":
-                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,"papayawhip")
-                   else:
-                       pass
+                   color = pixel_colors.get(pixel)
+                   if color:
+                       car_canvas.set_pixel((x*scale+xoffset)+dx,y*scale+yoffset+dy,color)
     return car_canvas
 @route
 def van_decal(state:State):
     state.latest_car.body = CARS["decal_van"].copy()
     state.drawn_car = color_car(state.latest_car, state.latest_car.color)
     return Page(state,[
-        "radical\n",
+        change_margin(Div("radical\n"),"12px"),
         state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -359,7 +347,7 @@ def add_kids(state:State):
     state.latest_car.body = CARS["fullbus"].copy()
     state.drawn_car = color_car(state.latest_car, state.latest_car.color)
     return Page(state,[
-        "captives acquired",
+        change_margin(Div("captives acquired\n"),"12px"),
         state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -374,11 +362,55 @@ def add_to_garage(state: State):
 @route
 def name_car(state: State, car_name:str):
     state.latest_car.name = car_name
+    if state.latest_car.body == CARS["sports"]:
+        return Page(
+            state, [
+            change_margin(Div("Successfully renamed!\n"),"12px"),
+            state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("Current name: "+state.latest_car.name+"\n",
+            TextBox("car_name",state.latest_car.name),
+            Button("Change name","name_car"),LineBreak(),
+            Button("Add spoiler","add_spoiler"))
+            ])
+    if state.latest_car.body == CARS["van"]:
+        return Page(
+            state, [
+            change_margin(Div("Successfully renamed!\n"),"12px"),
+            state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("Current name: "+state.latest_car.name+"\n",
+            TextBox("car_name",state.latest_car.name),
+            Button("Change name","name_car"),LineBreak(),
+            Button("Make it radical","van_decal"))
+            ])
+    if state.latest_car.body == CARS["truck"]:
+        return Page(
+            state, [
+            change_margin(Div("Successfully renamed!\n"),"12px"),
+            state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("Current name: "+state.latest_car.name+"\n",
+            TextBox("car_name",state.latest_car.name),
+            Button("Change name","name_car"),LineBreak(),
+            Button("IT NEEDS BIGGER WHEELS","get_big_wheels"))
+            ])
+    if state.latest_car.body == CARS["bus"]:
+        return Page(
+            state, [
+            change_margin(Div("Successfully renamed!\n"),"12px"),
+            state.drawn_car,
+            Div(Button("Save to garage","add_to_garage")),
+            Div("Current name: "+state.latest_car.name+"\n",
+            TextBox("car_name",state.latest_car.name),
+            Button("Change name","name_car"),LineBreak(),
+            Button("Pick up some kiddos","add_kids"))
+            ])
     return Page(
             state, [
-            "Successfully renamed!\n",
+            change_margin(Div("Successfully renamed!\n"),"12px"),
             state.drawn_car,
-            Button("Save to garage","add_to_garage"),
+            Div(Button("Save to garage","add_to_garage")),
             Div("Current name: "+state.latest_car.name+"\n",
             TextBox("car_name",state.latest_car.name),
             Button("Change name","name_car"))
@@ -399,7 +431,7 @@ def add_spoiler(state:State):
     state.drawn_car = color_car(state.latest_car,state.latest_car.color)
     return Page(
             state, [
-            "NeEEeEEoOWWWWW\n",
+            change_margin(Div(">:)\n"),"12px"),
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -428,7 +460,7 @@ def get_big_wheels(state:State):
     state.drawn_car = color_car(state.latest_car,state.latest_car.color)
     return Page(
             state, [
-            "yeeeAAAHHhhhHH\n",
+            change_margin(Div("yeeeAAAHHhhhHH\n"),"12px"),
             state.drawn_car,
             Div(Button("Save to garage","add_to_garage")),
             Div("You have created: "+state.latest_car.name+"\n",
@@ -436,6 +468,5 @@ def get_big_wheels(state:State):
             TextBox("car_name"),
             Button("Change name","name_car"))
             ])
-     
 start_server(State([],None,None,"",0,0,0,0))
 
